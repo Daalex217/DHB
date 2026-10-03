@@ -36,7 +36,6 @@ const messages = [
 const $ = s => document.querySelector(s);
 function show(id) {
   document.querySelectorAll('.view').forEach(v => v.classList.toggle('on', v.id === id));
-  if (id !== 'music') pause();
   const v = $('#' + id); if (v) v.scrollTop = 0;
 }
 document.addEventListener('click', e => {
