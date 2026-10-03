@@ -40,8 +40,18 @@ function show(id) {
   const v = $('#' + id); if (v) v.scrollTop = 0;
 }
 document.addEventListener('click', e => {
-  const t = e.target.closest('[data-go]'); if (t) show(t.dataset.go);
+  const t = e.target.closest('[data-go]'); if (!t) return;
+  // Si la carta ya se desbloqueó, "Tu cumpleaños" abre directamente la misma carta
+  if (t.dataset.go === 'cake' && isLetterSaved()) { show('letter'); stagger(); return; }
+  show(t.dataset.go);
 });
+
+/* ===================== CARTA GUARDADA (persistencia) ===================== */
+// Se guarda en el navegador (localStorage) que la carta ya fue desbloqueada.
+// La carta es el mismo contenido fijo del HTML, así que siempre se muestra igual.
+const LETTER_KEY = 'dhb_letter_unlocked';
+function isLetterSaved() { try { return localStorage.getItem(LETTER_KEY) === '1'; } catch (e) { return false; } }
+function saveLetter() { try { localStorage.setItem(LETTER_KEY, '1'); } catch (e) { /* sin almacenamiento: sigue funcionando en esta sesión */ } }
 
 /* ===================== CONFETI / CORAZONES ===================== */
 function confetti(n = 50, set = ['🎉', '💗', '✨', '🤍', '💙', '🌸']) {
@@ -121,7 +131,7 @@ messages.forEach((m, i) => {
 /* ===================== 6. PASTEL ===================== */
 $('#blow').onclick = () => {
   const c = $('#cake'); if (c.classList.contains('out')) return;
-  c.classList.add('out'); $('#blow').textContent = '¡Feliz cumpleaños! 💗';
+  c.classList.add('out'); saveLetter(); $('#blow').textContent = '¡Feliz cumpleaños! 💗';
   confetti(70);
   setTimeout(() => { show('letter'); confetti(30, ['💗', '🤍']); stagger(); }, 3200);
 };
