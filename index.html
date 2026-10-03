@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Happy Birthday Dieguitooo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Dancing+Script:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="hearts" aria-hidden="true"></div>
+
+<!-- 1. BIENVENIDA -->
+<main class="view on" id="welcome">
+  <h1 class="script">Feliz Cumpleaños Dieguitooo</h1>
+  <button class="gift" id="gift" aria-label="Abrir regalo">
+    <svg viewBox="0 0 120 120" width="190" height="190">
+      <g class="lid"><rect x="14" y="34" width="92" height="22" rx="4" fill="#bcd3ee" stroke="#3f66a8" stroke-width="3"/>
+        <path d="M60 34c-22-22-34-4-18 0zM60 34c22-22 34-4 18 0z" fill="#e9b8cc" stroke="#3f66a8" stroke-width="3"/></g>
+      <rect x="20" y="56" width="80" height="54" rx="4" fill="#d3e3f5" stroke="#3f66a8" stroke-width="3"/>
+      <rect x="52" y="34" width="16" height="76" fill="#3f66a8" opacity=".85"/>
+    </svg>
+  </button>
+  <p class="hand">Tienes una sorpresa esperándote</p>
+  <button class="btn" id="openBtn">Abrir sorpresa 🎁</button>
+</main>
+
+<!-- 2. MENÚ -->
+<main class="view" id="menu">
+  <div class="grid">
+    <button class="card" data-go="photos"><span>📸</span>Mis recuerdos</button>
+    <button class="card" data-go="music"><span>🎵</span>Una canción</button>
+    <button class="card" data-go="flowers"><span>🌷</span>Para ti</button>
+    <button class="card" data-go="cake"><span>🎂</span>Tu cumpleaños</button>
+  </div>
+  <p class="hand">Toca una para continuar ✨</p>
+</main>
+
+<!-- 3. FOTOS -->
+<section class="view" id="photos">
+  <button class="back" data-go="menu">← Regresar</button>
+  <h2 class="script">No hay fotos pero... 📸</h2>
+  <div class="board" id="board"></div>
+</section>
+
+<!-- 4. MÚSICA -->
+<section class="view" id="music">
+  <button class="back" data-go="menu">← Regresar</button>
+  <h2 class="script">Una canción para ti 🎵</h2>
+  <div class="player">
+    <div class="deck">
+      <div class="cover"><img id="cover" src="past.png" alt="" onerror="this.remove()">🎶</div>
+      <div class="info">
+        <strong id="songName">Cuenta conmigo</strong>
+        <span id="songArtist">Rio Roma</span>
+      </div>
+      <input type="range" id="bar" value="0" min="0" max="100" aria-label="Progreso">
+      <div class="times"><span id="cur">0:00</span><span id="dur">2:00</span></div>
+      <button class="play" id="play" aria-label="Reproducir">▶</button>
+    </div>
+    <div class="vinyl" id="vinyl"><i></i></div>
+  </div>
+  <audio id="audio" preload="metadata"></audio>
+</section>
+
+<!-- 5. FLORES -->
+<section class="view" id="flowers">
+  <button class="back" data-go="menu">← Regresar</button>
+  <h2 class="script">Unas palabritas para ti 🌷</h2>
+  <div class="bouquet" id="bouquet"></div>
+  <ul class="notes" id="notes"></ul>
+  <p class="hand">Toca cada flor 🌷(pero literal cada flor)</p>
+</section>
+
+<!-- 6. PASTEL -->
+<section class="view" id="cake">
+  <button class="back" data-go="menu">← Regresar</button>
+  <h2 class="script">Hora de pedir un deseo 🎂</h2>
+  <svg class="cakeSvg" viewBox="0 0 200 170" width="260">
+    <g id="candles">
+      <g><path class="flame" d="M60 20q-9 14 0 20q9-6 0-20z"/><rect x="57" y="40" width="6" height="26" fill="#e9b8cc"/></g>
+      <g><path class="flame" d="M100 14q-9 14 0 20q9-6 0-20z"/><rect x="97" y="34" width="6" height="32" fill="#8fb2de"/></g>
+      <g><path class="flame" d="M140 20q-9 14 0 20q9-6 0-20z"/><rect x="137" y="40" width="6" height="26" fill="#e9b8cc"/></g>
+    </g>
+    <rect x="30" y="66" width="140" height="34" rx="8" fill="#fff" stroke="#3f66a8" stroke-width="3"/>
+    <path d="M30 80q14 14 28 0t28 0t28 0t28 0t28 0" fill="none" stroke="#e9b8cc" stroke-width="5"/>
+    <rect x="18" y="100" width="164" height="46" rx="8" fill="#bcd3ee" stroke="#3f66a8" stroke-width="3"/>
+    <ellipse cx="100" cy="150" rx="92" ry="9" fill="#fff" stroke="#3f66a8" stroke-width="3"/>
+  </svg>
+  <button class="btn" id="blow">Soplar velas</button>
+</section>
+
+<!-- 7. CARTA FINAL -->
+<section class="view" id="letter">
+  <button class="back" data-go="menu">← Regresar</button>
+  <article class="paper">
+    <i class="tape t1"></i><i class="tape t2"></i>
+    <figure class="polaroid big">
+      <!-- CAMBIAR FOTO AQUÍ (se define en script.js: finalPhoto) -->
+      <img id="finalImg" alt="Foto final">
+    </figure>
+    <!-- CAMBIAR TEXTO AQUÍ -->
+    <div class="text" id="letterText">
+      <p>Dieguitooo:<br>Feliz cumpleañosss 🥳💗</p>
+      <p>No podía dejar pasar tu cumpleaños sin escribirte aunque sea unas palabritas.</p>
+      <p>La verdad es que me da mucho gusto haber coincidido contigo en esta etapa de mi vida. Hemos compartido muchísimas cosas, desde momentos súper simples hasta otros que definitivamente voy a recordar durante mucho tiempo, y todos ellos los guardo con muchísimo cariño.</p>
+      <p>Quizá no siempre sé demostrarlo o decirlo, pero quiero que sepas que te quiero muchísimo y que siempre voy a desear que te vaya bien en todo lo que hagas, espero que este nuevo año de vida venga lleno de cosas bonitas para ti, de metas cumplidas, nuevas experiencias, muchas risas y momentos que te hagan muy feliz. Que nunca te falten motivos para sonreír y personas que te quieran bonito.</p>
+      <p>Y bueno… tampoco quiero hacer esto eterno porque luego vas a decir “ay, esta niña qué” JAJAJA, pero sí quería que tuvieras algo que pudieras guardar y que te recordara que hay alguien que te tiene muchísimo cariño y que se alegra de verte crecer y cumplir años.</p>
+      <p>Gracias por todos los momentos, por las risas, por las pláticas y por simplemente haber sido tú conmigo.</p>
+      <p>Feliz cumpleaños, Dieguito.</p>
+      <p>Espero que la pases increíble y que este nuevo año te traiga muchísimas cosas bonitas.</p>
+      <p>Te quiero mucho. 🤍</p>
+      <p class="sign">—Day 💗</p>
+    </div>
+  </article>
+</section>
+
+<script src="script.js"></script>
+</body>
+</html>
