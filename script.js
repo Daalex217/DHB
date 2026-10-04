@@ -26,7 +26,7 @@ const memories = [
 
 // Foto de la carta final
 // CAMBIAR FOTO AQUÍ
-const finalPhoto = "diego.png";
+const finalPhoto = "image.png";
 
 // Canción
 // CAMBIAR AUDIO AQUÍ

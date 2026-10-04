@@ -136,3 +136,5 @@ body{font-family:'Caveat',cursive;color:var(--ink);background-color:var(--bg);
 @keyframes unfold{from{transform:perspective(900px) rotateX(-88deg) scaleY(.2);opacity:0}to{transform:rotate(-.6deg);opacity:1}}
 .cakeSvg.celebrate{animation:celebrate .9s ease-out}
 @keyframes celebrate{30%{transform:scale(1.08) rotate(-2deg)}60%{transform:scale(.97) rotate(2deg)}}
+/* galería: el texto de cada foto solo se ve al ampliarla */
+.board figcaption{display:none}
