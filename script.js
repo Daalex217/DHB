@@ -64,9 +64,9 @@ function show(id) {
   if (id === 'letter' && seen.length < SECTIONS.length) id = 'menu';   // carta bloqueada hasta descubrir las 4
   // Audio: "Feliz cumpleaños" suena solo en la carta final (siempre desde el inicio, sin duplicarse)
   if (id === 'letter') {
-    pause();                                    // cuenta conmigo se detiene (sin fade)
-    bday.currentTime = 0; bday.play().catch(e => console.warn('No se pudo reproducir', birthdayAudioFile, e));
-  } else if (!bday.paused) { bday.pause(); bday.currentTime = 0; }
+    bdayWanted = true; pause();                 // cuenta conmigo baja con fade
+    playBday();                                 // cumple sube con fade, siempre desde el inicio
+  } else if (bdayWanted) stopBday();
   document.querySelectorAll('.view').forEach(v => v.classList.toggle('on', v.id === id));
   const v = $('#' + id); if (v) v.scrollTop = 0;
   if (SECTIONS.includes(id)) markSeen(id);
@@ -134,17 +134,44 @@ $('#zoom').onclick = () => $('#zoom').classList.remove('on');
 const audio = $('#audio'), btn = $('#play'), bar = $('#bar');
 audio.src = audioFile;
 const bday = new Audio(birthdayAudioFile); bday.preload = 'auto';   // un solo objeto: nunca suena doble
+
+/* ---- Fades de audio (todas las canciones suben y bajan suave) ---- */
+const FADE_MS = 2500;                           // duración del fade: 2.5 segundos
+let cuentaWanted = false, bdayWanted = false;   // qué canción "es dueña" del audio ahora
+const fades = new Map();                        // un solo fade activo por canción (evita cruces/duplicados)
+function fadeTo(el, vol, done) {
+  clearInterval(fades.get(el));
+  const from = el.volume, t0 = performance.now();
+  const id = setInterval(() => {
+    const k = Math.min(1, (performance.now() - t0) / FADE_MS);
+    el.volume = Math.max(0, Math.min(1, from + (vol - from) * k));
+    if (k === 1) { clearInterval(id); fades.delete(el); if (done) done(); }
+  }, 50);
+  fades.set(el, id);
+}
+function fadeOut(el, done) { fadeTo(el, 0, () => { el.pause(); if (done) done(); }); }
+function playBday() {
+  bday.volume = 0; bday.currentTime = 0;
+  bday.play().catch(e => console.warn('No se pudo reproducir', birthdayAudioFile, e));
+  fadeTo(bday, 1); syncBg();
+}
+function stopBday() { bdayWanted = false; fadeOut(bday, () => { bday.currentTime = 0; }); syncBg(); }
 const fmt = s => isFinite(s) ? Math.floor(s / 60) + ':' + String(Math.floor(s % 60)).padStart(2, '0') : '0:00';
-function pause() { audio.pause(); btn.textContent = '▶'; $('#vinyl').classList.remove('spin'); }
+function pause(fade = true) {
+  cuentaWanted = false; btn.textContent = '▶'; $('#vinyl').classList.remove('spin');
+  if (fade) fadeOut(audio); else audio.pause();
+  syncBg();
+}
 btn.onclick = () => {
-  if (audio.paused) {
-    audio.play().then(() => { btn.textContent = '❚❚'; $('#vinyl').classList.add('spin'); })
+  if (!cuentaWanted) {
+    if (audio.paused) audio.volume = 0;
+    audio.play().then(() => { cuentaWanted = true; btn.textContent = '❚❚'; $('#vinyl').classList.add('spin'); fadeTo(audio, 1); syncBg(); })
       .catch(() => alert('Agrega tu audio en assets/music/cancion.mp3'));
   } else pause();
 };
 audio.onloadedmetadata = () => $('#dur').textContent = fmt(audio.duration);
 audio.ontimeupdate = () => { bar.value = audio.duration ? audio.currentTime / audio.duration * 100 : 0; $('#cur').textContent = fmt(audio.currentTime); };
-audio.onended = pause;
+audio.onended = () => pause(false);
 bar.oninput = () => { if (audio.duration) audio.currentTime = bar.value / 100 * audio.duration; };
 
 /* ===================== 5. FLORES ===================== */
@@ -191,7 +218,7 @@ $('#blow').onclick = blowCandles;
 let envBusy = false;
 function openLetterSequence() {
   if (envBusy || seen.length < SECTIONS.length) return; envBusy = true;
-  pause();                                                        // 0) cuenta conmigo se detiene antes de la carta
+  bdayWanted = true; pause();                                     // 0) cuenta conmigo y el fondo bajan con fade antes de la carta
   bday.muted = true; bday.play().then(() => { bday.pause(); bday.muted = false; bday.currentTime = 0; }).catch(() => { bday.muted = false; }); // permiso de audio en celulares (silencioso)
   const env = $('#env');
   env.classList.add('on');                                        // 1) aparece el sobre
@@ -243,15 +270,14 @@ function stagger() {
 /* ===================== MÚSICA DE FONDO ===================== */
 // Suena sola salvo cuando suena "cuenta conmigo" o "cumple" (se pausa y luego se retoma).
 // Si el navegador bloquea el autoplay con sonido, arranca en la primera interacción (toque, clic o tecla).
-const bg = new Audio(bgAudioFile); bg.loop = true; bg.volume = bgVolume; bg.preload = 'auto';
+const bg = new Audio(bgAudioFile); bg.loop = true; bg.volume = 0; bg.preload = 'auto';
 const BG_EVENTS = ['pointerup', 'touchend', 'click', 'keydown'];
 function syncBg() {
-  const other = !audio.paused || (!bday.paused && !bday.muted);   // ¿suena otra canción?
-  if (other) { bg.pause(); return; }
-  bg.play().then(() => BG_EVENTS.forEach(e => document.removeEventListener(e, syncBg))).catch(() => { });
+  if (cuentaWanted || bdayWanted) { fadeOut(bg); return; }          // suena otra canción: el fondo baja suave
+  if (bg.paused) bg.volume = 0;                                      // entra con fade-in
+  bg.play().then(() => { BG_EVENTS.forEach(e => document.removeEventListener(e, syncBg)); fadeTo(bg, bgVolume); }).catch(() => { });
 }
 BG_EVENTS.forEach(e => document.addEventListener(e, syncBg));
-[audio, bday].forEach(a => ['play', 'pause', 'ended'].forEach(e => a.addEventListener(e, syncBg)));
 syncBg();                                                          // intenta autoplay al abrir la página
 
 updateMenu();
