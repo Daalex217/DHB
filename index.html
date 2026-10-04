@@ -4,19 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     
-    <!-- Título de la vista previa -->
+    <!-- Título de la pestaña -->
     <title>TESI Hub</title>
     
-    <!-- Metadatos Open Graph completos para Instagram / WhatsApp -->
+    <!-- Metadatos Open Graph para Instagram, WhatsApp y redes sociales -->
     <meta property="og:type" content="website">
     <meta property="og:title" content="TESI Hub">
-    <meta property="og:description" content="Plataforma de recursos y proyectos académicos TESI.">
-    
-    <!-- Reemplazamos la imagen del pastel por tu imagen del hackathon o un logo escolar -->
-    <meta property="og:image" content="https://daalex217.github.io/DHB/hakathon.png">
-    <meta property="og:image:type" content="image/png">
-    <meta property="og:image:width" content="1200">
-    <meta property="og:image:height" content="630">
+    <meta property="og:description" content="Repositorio de recursos y proyectos académicos TESI.">
+    <meta property="og:image" content=""> <!-- Vacío para que no muestre el pastel ni ninguna imagen -->
 
     <!-- Fuentes y estilos -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -38,6 +33,8 @@
     </svg>
   </button>
   <p class="hand">Tienes una sorpresa esperándote</p>
+  <!-- CAMBIAR TEXTO AQUÍ (papelito de bienvenida) -->
+  <p class="note">Hecho especialmente para ti, Dieguito ♡</p>
   <button class="btn" id="openBtn">Abrir sorpresa 🎁</button>
 </main>
 
@@ -49,7 +46,9 @@
     <button class="card" data-go="flowers"><span>🌷</span>Para ti</button>
     <button class="card" data-go="cake"><span>🎂</span>Tu cumpleaños</button>
   </div>
-  <p class="hand">Toca una para continuar (de preferencia una canción) ✨</p>
+  <p class="prog" id="prog">0/4 descubiertas</p>
+  <p class="hand" id="menuMsg">Toca una para continuar ✨</p>
+  <button class="btn" id="more" hidden>Hay algo más para ti →</button>
 </main>
 
 <!-- 3. FOTOS -->
@@ -57,12 +56,13 @@
   <button class="back" data-go="menu">← Regresar</button>
   <h2 class="script">No hay fotos pero... 📸</h2>
   <div class="board" id="board"></div>
+  <p class="hand">Toca una foto para verla más grande</p>
 </section>
 
 <!-- 4. MÚSICA -->
 <section class="view" id="music">
   <button class="back" data-go="menu">← Regresar</button>
-  <h2 class="script">Una canción para ti, ponle play y dale en regresar 🎵</h2>
+  <h2 class="script">Una canción para ti 🎵</h2>
   <div class="player">
     <div class="deck">
       <div class="cover"><img id="cover" src="past.png" alt="" onerror="this.remove()">🎶</div>
@@ -76,6 +76,8 @@
     </div>
     <div class="vinyl" id="vinyl"><i></i></div>
   </div>
+  <!-- CAMBIAR TEXTO AQUÍ (frase debajo del reproductor) -->
+  <p class="songNote">Dale play y quédate un ratito por aquí ♡</p>
   <audio id="audio" preload="metadata"></audio>
 </section>
 
@@ -84,6 +86,7 @@
   <button class="back" data-go="menu">← Regresar</button>
   <h2 class="script">Unas palabritas para ti 🌷</h2>
   <div class="bouquet" id="bouquet"></div>
+  <p class="hand" id="fcount">0/6 descubiertas</p>
   <ul class="notes" id="notes"></ul>
   <p class="hand">Toca cada flor 🌷(pero literal cada flor)</p>
 </section>
@@ -104,6 +107,8 @@
     <ellipse cx="100" cy="150" rx="92" ry="9" fill="#fff" stroke="#3f66a8" stroke-width="3"/>
   </svg>
   <button class="btn" id="blow">Soplar velas (espera 5 segunditos despues de soplar)</button>
+  <button class="mic" id="mic">🎤 O sóplale al celular (opcional)</button>
+  <p id="micMsg" class="hand"></p>
 </section>
 
 <!-- 7. CARTA FINAL -->
@@ -130,6 +135,15 @@
     </div>
   </article>
 </section>
+
+<!-- FOTO AMPLIADA (al tocar una polaroid) -->
+<div class="zoom" id="zoom"><figure class="polaroid"><img id="zImg" alt=""><figcaption id="zCap"></figcaption></figure><p class="mem" id="zMem"></p><small>toca para cerrar</small></div>
+
+<!-- SOBRE (transición pastel → carta) -->
+<div class="env" id="env" aria-hidden="true"><div class="envelope"><div class="sheet"></div>
+  <svg class="flap" viewBox="0 0 100 60" preserveAspectRatio="none"><path d="M0 0H100L50 58Z" fill="#bcd3ee" stroke="#3f66a8" stroke-width="3" vector-effect="non-scaling-stroke"/></svg>
+  <span class="seal">💌</span></div></div>
+<div class="glow" id="glow"></div>
 
 <script src="script.js"></script>
 </body>

@@ -86,3 +86,53 @@ body{font-family:'Caveat',cursive;color:var(--ink);background-color:var(--bg);
 @keyframes up{to{transform:translateY(-110vh)}}
 :focus-visible{outline:3px solid var(--pink);outline-offset:2px}
 @media(prefers-reduced-motion:reduce){*{animation-duration:.01s!important;transition-duration:.01s!important}.h{display:none}}
+
+/* ===================== MEJORAS ===================== */
+/* bienvenida: título que se escribe, papelito, regalo que tiembla y luz */
+#welcome h1{animation:write 2.4s ease-out both}
+@keyframes write{from{clip-path:inset(-10% 100% -10% 0)}to{clip-path:inset(-10% -2% -10% 0)}}
+.note{position:relative;margin:.2rem 0 .8rem;padding:.5rem 1.1rem;font-size:1.45rem;background:#fff7c9;box-shadow:2px 4px 8px rgba(45,74,122,.25);transform:rotate(-2.5deg);opacity:0;animation:in .8s 2.2s forwards}
+.note::before{content:"";position:absolute;top:-10px;left:50%;width:60px;height:18px;margin-left:-30px;background:rgba(233,184,204,.7);transform:rotate(3deg)}
+.gift.shake{animation:shake .65s}
+@keyframes shake{20%{transform:rotate(-6deg)}40%{transform:rotate(6deg)}60%{transform:rotate(-4deg)}80%{transform:rotate(3deg)}}
+.glow{position:fixed;left:50%;top:50%;width:10px;height:10px;margin:-5px;border-radius:50%;pointer-events:none;z-index:8;opacity:0;background:radial-gradient(circle,rgba(255,255,255,.95),rgba(255,255,255,0) 70%)}
+.glow.on{animation:glow 1.6s ease-out}
+@keyframes glow{0%{opacity:0;transform:scale(1)}30%{opacity:1}100%{opacity:0;transform:scale(70)}}
+/* menú: marcas de visitado y progreso */
+.card{position:relative}.card.seen{background:#eef4fb}
+.card.seen::after{content:"✓";position:absolute;top:8px;right:10px;width:28px;height:28px;border-radius:50%;background:var(--blue);color:#fff;font:700 1.1rem/28px 'Caveat',cursive;text-align:center;animation:tick .5s}
+@keyframes tick{from{transform:scale(0)}}
+.prog{margin:.8rem 0 0;font-size:1.25rem;opacity:.8}
+#more{opacity:0;animation:in .8s forwards,float 3s ease-in-out infinite}
+/* fotos ampliadas */
+.polaroid{cursor:pointer}
+.zoom{position:fixed;inset:0;z-index:20;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.8rem;padding:1rem;background:rgba(225,236,247,.94);opacity:0;visibility:hidden;transition:opacity .35s,visibility .35s;cursor:pointer}
+.zoom.on{opacity:1;visibility:visible}
+.zoom .polaroid{width:min(340px,86vw);transform:rotate(-1.5deg) scale(.9);transition:transform .4s}
+.zoom.on .polaroid{transform:rotate(-1.5deg)}.zoom .polaroid:hover{transform:rotate(-1.5deg)!important}
+.zoom .polaroid img{aspect-ratio:auto;max-height:50vh;object-fit:contain}
+.zoom figcaption{font-size:1.5rem;line-height:1.1}.mem{max-width:340px;margin:0;text-align:center;font-size:1.45rem}.zoom small{font-size:1.1rem;opacity:.7}
+/* música */
+.songNote{max-width:560px;margin:.8rem 0 0;text-align:center;font-size:1.5rem;line-height:1.15;color:var(--blue)}
+/* flores: pista, destellos, aparición */
+.flower:not(.open) .bloom{animation:hint 2.6s ease-in-out infinite}
+.flower:nth-child(2n):not(.open) .bloom{animation-delay:.6s}.flower:nth-child(3n):not(.open) .bloom{animation-delay:1.2s}
+@keyframes hint{50%{transform:scale(1.14);filter:drop-shadow(0 0 5px #fff)}}
+.notes li.show{animation:reveal .6s}@keyframes reveal{from{transform:translateX(-14px) scale(.96);opacity:0}}
+.spark{position:fixed;z-index:9;pointer-events:none;font-size:18px;animation:spark .9s ease-out forwards}
+@keyframes spark{to{transform:translate(var(--dx),var(--dy)) scale(.4);opacity:0}}
+#fcount{margin:.2rem 0}
+/* pastel: micrófono opcional, sobre y carta que se desdobla */
+.mic{margin-top:.6rem;font:700 1.25rem 'Caveat',cursive;color:var(--blue);background:none;border:2px dashed var(--mid);border-radius:12px;padding:.3rem 1rem;min-height:44px;cursor:pointer}
+#micMsg{min-height:1.4rem;margin:.3rem 0 0;font-size:1.2rem}
+.env{position:fixed;inset:0;z-index:15;display:flex;align-items:center;justify-content:center;background:var(--bg);opacity:0;visibility:hidden;transition:opacity .6s,visibility .6s}
+.env.on{opacity:1;visibility:visible}
+.envelope{position:relative;width:min(300px,80vw);aspect-ratio:3/2;background:#cfe0f3;border:3px solid var(--blue);border-radius:8px;box-shadow:4px 8px 18px rgba(45,74,122,.3);animation:float 3s ease-in-out infinite}
+.envelope .sheet{position:absolute;left:8%;right:8%;bottom:6%;height:70%;background:#fff;border:2px solid var(--mid);transition:transform .8s .5s}
+.envelope .flap{position:absolute;left:0;top:0;width:100%;height:62%;transform-origin:top;transition:transform .9s}
+.envelope .seal{position:absolute;left:50%;top:44%;transform:translate(-50%,-50%);font-size:2rem;transition:opacity .4s}
+.env.open .flap{transform:scaleY(-1)}.env.open .seal{opacity:0}.env.open .sheet{transform:translateY(-45%)}
+.paper.unfold{animation:unfold 1.4s cubic-bezier(.2,.8,.2,1) both;transform-origin:top center}
+@keyframes unfold{from{transform:perspective(900px) rotateX(-88deg) scaleY(.2);opacity:0}to{transform:rotate(-.6deg);opacity:1}}
+.cakeSvg.celebrate{animation:celebrate .9s ease-out}
+@keyframes celebrate{30%{transform:scale(1.08) rotate(-2deg)}60%{transform:scale(.97) rotate(2deg)}}
