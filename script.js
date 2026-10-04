@@ -32,6 +32,15 @@ const finalPhoto = "image.png";
 // CAMBIAR AUDIO AQUÍ
 const audioFile = "cuenta conmigo.mp3";
 
+// Canción que suena al abrir la carta final
+// CAMBIAR AUDIO AQUÍ
+const birthdayAudioFile = "cumple.mp3";
+
+// Música de fondo (suena desde que abre la página, en loop y bajita)
+// CAMBIAR AUDIO AQUÍ
+const bgAudioFile = "fondo.mp3";
+const bgVolume = 0.25;   // 0 = silencio, 1 = máximo
+
 // Las seis frases de las flores
 const messages = [
   "Eres un gran amigo", "Muy inteligente", "Gracias por cada risa",
@@ -53,6 +62,11 @@ function updateMenu() {
 }
 function show(id) {
   if (id === 'letter' && seen.length < SECTIONS.length) id = 'menu';   // carta bloqueada hasta descubrir las 4
+  // Audio: "Feliz cumpleaños" suena solo en la carta final (siempre desde el inicio, sin duplicarse)
+  if (id === 'letter') {
+    pause();                                    // cuenta conmigo se detiene (sin fade)
+    bday.currentTime = 0; bday.play().catch(e => console.warn('No se pudo reproducir', birthdayAudioFile, e));
+  } else if (!bday.paused) { bday.pause(); bday.currentTime = 0; }
   document.querySelectorAll('.view').forEach(v => v.classList.toggle('on', v.id === id));
   const v = $('#' + id); if (v) v.scrollTop = 0;
   if (SECTIONS.includes(id)) markSeen(id);
@@ -119,6 +133,7 @@ $('#zoom').onclick = () => $('#zoom').classList.remove('on');
 /* ===================== 4. MÚSICA ===================== */
 const audio = $('#audio'), btn = $('#play'), bar = $('#bar');
 audio.src = audioFile;
+const bday = new Audio(birthdayAudioFile); bday.preload = 'auto';   // un solo objeto: nunca suena doble
 const fmt = s => isFinite(s) ? Math.floor(s / 60) + ':' + String(Math.floor(s % 60)).padStart(2, '0') : '0:00';
 function pause() { audio.pause(); btn.textContent = '▶'; $('#vinyl').classList.remove('spin'); }
 btn.onclick = () => {
@@ -176,6 +191,8 @@ $('#blow').onclick = blowCandles;
 let envBusy = false;
 function openLetterSequence() {
   if (envBusy || seen.length < SECTIONS.length) return; envBusy = true;
+  pause();                                                        // 0) cuenta conmigo se detiene antes de la carta
+  bday.muted = true; bday.play().then(() => { bday.pause(); bday.muted = false; bday.currentTime = 0; }).catch(() => { bday.muted = false; }); // permiso de audio en celulares (silencioso)
   const env = $('#env');
   env.classList.add('on');                                        // 1) aparece el sobre
   setTimeout(() => env.classList.add('open'), 1300);              // 2) se abre
@@ -222,5 +239,19 @@ function stagger() {
     p.style.animation = `in .8s ${0.5 + i * 0.35}s forwards`;
   });
 }
+
+/* ===================== MÚSICA DE FONDO ===================== */
+// Suena sola salvo cuando suena "cuenta conmigo" o "cumple" (se pausa y luego se retoma).
+// Si el navegador bloquea el autoplay con sonido, arranca en la primera interacción (toque, clic o tecla).
+const bg = new Audio(bgAudioFile); bg.loop = true; bg.volume = bgVolume; bg.preload = 'auto';
+const BG_EVENTS = ['pointerup', 'touchend', 'click', 'keydown'];
+function syncBg() {
+  const other = !audio.paused || (!bday.paused && !bday.muted);   // ¿suena otra canción?
+  if (other) { bg.pause(); return; }
+  bg.play().then(() => BG_EVENTS.forEach(e => document.removeEventListener(e, syncBg))).catch(() => { });
+}
+BG_EVENTS.forEach(e => document.addEventListener(e, syncBg));
+[audio, bday].forEach(a => ['play', 'pause', 'ended'].forEach(e => a.addEventListener(e, syncBg)));
+syncBg();                                                          // intenta autoplay al abrir la página
 
 updateMenu();
